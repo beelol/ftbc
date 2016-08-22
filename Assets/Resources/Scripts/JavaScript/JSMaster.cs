@@ -19,7 +19,9 @@ public class JSMaster : MonoBehaviour {
 	// Use this for initialization
 	void Awake ()
 	{
-		MODULE_PATH = Application.persistentDataPath + "/modules";
+		MODULE_PATH = Application.persistentDataPath.Replace('/', ModuleLoader.GetOSDirectorySeparator())  + ModuleLoader.GetOSDirectorySeparator() + "modules";
+
+        print(MODULE_PATH);
 
 		InitializeJSEngine();
 

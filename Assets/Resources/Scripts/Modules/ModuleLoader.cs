@@ -13,19 +13,27 @@ using UnityEngine;
 /// </summary>
 public class ModuleLoader
 {
-	public const string MAIN_SCRIPT_RELATIVE_PATH = "/main.js";
+	public const string MAIN_SCRIPT_RELATIVE_PATH = "main.js";
 	public const string MAIN_OBJECT_NAME = "mainObject";
 
 	public const string CUBE_MESH_PATH = "Models/cube";
 
 	public static Mesh cubeMesh;
 
+    public static char GetOSDirectorySeparator()
+    {
+        bool isWindows =
+            Application.platform == RuntimePlatform.WindowsPlayer ||
+            Application.platform == RuntimePlatform.WindowsEditor ||
+            Application.platform == RuntimePlatform.WindowsWebPlayer;
 
-	public static void LoadModules(string path)
+        //return isWindows ? "\\" : "/";
+        return '\\';
+    }
+
+    public static void LoadModules(string path)
 	{
 		cubeMesh = Resources.Load<Mesh>(CUBE_MESH_PATH);
-
-		//ScaleMesh(cubeMesh);
 
 		foreach (string dir in Directory.GetDirectories(path))
 		{
@@ -34,33 +42,13 @@ public class ModuleLoader
 		}
 	}
 
-	//private static void ScaleMesh(Mesh mesh, float scale = -.5f)
-	//{
-	//	var vertices = mesh.vertices;
-
-	//	for (var i = 0; i < vertices.Length; i++)
-	//	{
-	//		var vertex = vertices[i];
-
-	//		vertex.x += scale;
-	//		vertex.y += scale;
-	//		vertex.z += scale;
-
-	//		vertices[i] = vertex;
-	//	}
-
-	//	mesh.vertices = vertices;
-
-	//	mesh.RecalculateNormals();
-	//	mesh.RecalculateBounds();
-	//}
-
 	// Loads a module at a given path
 	private static void LoadModule(string path)
 	{
 		// All actor type directories in a module (entities, blocks...)
 		foreach (string dir in Directory.GetDirectories(path))
 		{
+
 			LoadActors(dir);
 		}
 	}
@@ -69,7 +57,7 @@ public class ModuleLoader
 	// i.e. Load all blocks from the block directory
 	private static void LoadActors(string path)
 	{
-		string type = path.Split('/').Last().ToLower();
+		string type = path.Split(GetOSDirectorySeparator()).Last().ToLower();
 
 		// All actor directories within an actor type directory
 		foreach (string dir in Directory.GetDirectories(path))
@@ -81,7 +69,7 @@ public class ModuleLoader
 	// Loads an actor based on its directory
 	private static void LoadActor(string dir, string type)
 	{
-		RunScript(dir + MAIN_SCRIPT_RELATIVE_PATH);
+		RunScript(dir + GetOSDirectorySeparator() + MAIN_SCRIPT_RELATIVE_PATH);
 		StoreActorData(dir, type);
 	}
 
@@ -93,9 +81,9 @@ public class ModuleLoader
 	private static void StoreActorData(string path, string type)
 	{
 		// Store data of block including the id and path to js file to run when spawning
-		string name = path.Split('/').Last().ToLower();
+		string name = path.Split(GetOSDirectorySeparator()).Last().ToLower();
 
-		var blockData = GetActorData(type, name, JSMaster.actorStore.Count, path + MAIN_SCRIPT_RELATIVE_PATH);
+		var blockData = GetActorData(type, name, JSMaster.actorStore.Count, path + GetOSDirectorySeparator() + MAIN_SCRIPT_RELATIVE_PATH);
 
 		// Old list
 		//JSMaster.actorStore.Add(blockData);

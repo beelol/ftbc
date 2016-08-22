@@ -62,11 +62,11 @@ public class Actor : MonoBehaviour
 
 	protected static void SetTextureFromFile(ActorData data, Actor actor)
 	{
-		var pathArray = data.path.Split('/');
+		var pathArray = data.path.Split(ModuleLoader.GetOSDirectorySeparator());
 
 		pathArray[pathArray.Length - 1] = "texture.png";
 
-		var texture = ReadTexture(String.Join("/", pathArray));
+		var texture = ReadTexture(string.Join(ModuleLoader.GetOSDirectorySeparator().ToString(), pathArray));
 
 		actor.GetComponent<Renderer>().material.SetTexture("_MainTex", texture);
 	}
